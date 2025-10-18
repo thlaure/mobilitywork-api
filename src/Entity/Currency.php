@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Entity;
+declare(strict_types=1);
 
-use App\Repository\CurrencyRepository;
+namespace MobilityWork\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
+use MobilityWork\Repository\CurrencyRepository;
 
 #[ORM\Entity(repositoryClass: CurrencyRepository::class)]
 class Currency

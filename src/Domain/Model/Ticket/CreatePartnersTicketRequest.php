@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MobilityWork\Domain\Model\Ticket;
 
+use MobilityWork\Entity\DomainConfig;
+use MobilityWork\Entity\Language;
+
 class CreatePartnersTicketRequest
 {
     public function __construct(

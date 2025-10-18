@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Entity;
+declare(strict_types=1);
 
-use App\Repository\LanguageRepository;
+namespace MobilityWork\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
+use MobilityWork\Repository\LanguageRepository;
 
 #[ORM\Entity(repositoryClass: LanguageRepository::class)]
 class Language

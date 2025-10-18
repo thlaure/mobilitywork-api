@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Entity;
+declare(strict_types=1);
 
-use App\Repository\ReservationRepository;
+namespace MobilityWork\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
+use MobilityWork\Repository\ReservationRepository;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation

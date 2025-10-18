@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace MobilityWork\Domain\Model\Ticket;
 
+use MobilityWork\Entity\DomainConfig;
+use MobilityWork\Entity\Hotel;
+use MobilityWork\Entity\Language;
+
 class CreateCustomerTicketRequest
 {
     public function __construct(

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repository;
+namespace MobilityWork\Repository;
 
-use App\Entity\Room;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use MobilityWork\Entity\Room;
 
 /**
  * @extends ServiceEntityRepository<Room>

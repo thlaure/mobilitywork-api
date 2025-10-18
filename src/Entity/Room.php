@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Entity;
+declare(strict_types=1);
 
-use App\Repository\RoomRepository;
+namespace MobilityWork\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
+use MobilityWork\Repository\RoomRepository;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
 class Room

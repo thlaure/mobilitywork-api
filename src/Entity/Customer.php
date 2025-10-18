@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Entity;
+declare(strict_types=1);
 
-use App\Repository\CustomerRepository;
+namespace MobilityWork\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
+use MobilityWork\Repository\CustomerRepository;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 class Customer
