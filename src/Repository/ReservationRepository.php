@@ -16,6 +16,11 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
+    public function getByRef(string $reference): ?Reservation
+    {
+        return $this->findOneBy(['reference' => $reference]);
+    }
+
 //    /**
 //     * @return Reservation[] Returns an array of Reservation objects
 //     */
