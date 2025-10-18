@@ -10,3 +10,31 @@ This class is part of a Symfony 2/3/4 project, but that doesn't matter._
 Try to apply best PHP and **OOP** practices, and justify your choices.
 
 _Carefully read the existing implementation, and make it solid._
+
+Hotel:
+- name: string
+- address: string
+- currency: Currency
+
+Currency:
+- code: string
+
+Reservation:
+- room: Room
+- hotel: Hotel
+- bookedDate: DateTime
+- roomPrice: float
+- bookedStartTime: DateTime
+- bookedEndTime: DateTime
+- customer: Customer
+- reference: string
+
+Customer:
+- simplePhoneNumber: string
+
+Room:
+- name: string
+- type: string
+
+Language:
+- name: string
