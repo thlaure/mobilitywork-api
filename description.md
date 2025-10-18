@@ -15,6 +15,10 @@ Hotel:
 - name: string
 - address: string
 - currency: Currency
+- hotelContact: HotelContact
+
+HotelContact:
+- email: string
 
 Currency:
 - code: string

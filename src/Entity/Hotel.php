@@ -24,6 +24,9 @@ class Hotel
     #[ORM\ManyToOne]
     private ?Currency $currency = null;
 
+    #[ORM\ManyToOne]
+    private ?HotelContact $hotelContact = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +64,18 @@ class Hotel
     public function setCurrency(?Currency $currency): static
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    public function getHotelContact(): ?HotelContact
+    {
+        return $this->hotelContact;
+    }
+
+    public function setHotelContact(?HotelContact $hotelContact): static
+    {
+        $this->hotelContact = $hotelContact;
 
         return $this;
     }
