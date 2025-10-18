@@ -6,9 +6,6 @@ use Zendesk\API\HttpClient as ZendeskAPI;
 
 class ZendeskService extends AbstractService
 {
-    
-    const PRODUCTION_SECRET_TOKEN = '7a960781b588403ca32116048238d01c';
-
     /**
      * @param string $gender
      * @param string $firstName
