@@ -2,43 +2,28 @@
 
 namespace MobilityWork\Service;
 
+use MobilityWork\Domain\Model\Ticket\CreateCustomerTicketRequest;
+use MobilityWork\Repository\ReservationRepository;
 use Zendesk\API\HttpClient as ZendeskAPI;
 
 class ZendeskService extends AbstractService
 {
-    /**
-     * @param string $gender
-     * @param string $firstName
-     * @param string $lastName
-     * @param string $phoneNumber
-     * @param string $email
-     * @param string $message
-     * @param string $reservationNumber
-     * @param \MobilityWork\Entity\Hotel $hotel
-     * @param \MobilityWork\Entity\Language $language
-     * @param \MobilityWork\Entity\DomainConfig $domainConfig
-     *
-     * @return boolean
-     */
-    public function createCustomerTicket(
-        $gender,
-        $firstName,
-        $lastName,
-        $phoneNumber,
-        $email,
-        $message,
-        $reservationNumber,
-        $hotel,
-        $language,
-        $domainConfig)
+    public function __construct(
+        private readonly ReservationRepository $reservationRepository,
+    ) {
+    }
+
+    public function createCustomerTicket(CreateCustomerTicketRequest $request): bool
     {
+        /** @var ?Reservation $reservation */
         $reservation = null;
 
-        if (!empty($reservationNumber)) {
-            $reservation = $this->getEntityRepository('Reservation')->getByRef($reservationNumber);
+        if (!empty($request->reservationNumber)) {
+            $reservation = $this->reservationRepository->getByRef($request->reservationNumber);
 
-            if ($reservation != null) {
-                if ($hotel == null) {
+            if (null !== $reservation) {
+                $hotel = $request->hotel;
+                if (null === $hotel) {
                     $hotel = $reservation->getHotel();
                 }
             }
@@ -46,24 +31,24 @@ class ZendeskService extends AbstractService
 
         $customFields = [];
         $customFields['80924888'] = 'customer';
-        $customFields['80531327'] = $reservationNumber;
+        $customFields['80531327'] = $request->reservationNumber;
 
-        if ($hotel != null) {
+        if (null !== $hotel) {
             $hotelContact = $this->getServiceManager()->get('service.hotel_contacts')->getMainHotelContact($hotel);
-            $customFields['80531267'] = $hotelContact != null ? $hotelContact->getEmail() : null;
+            $customFields['80531267'] = $hotelContact?->getEmail();
             $customFields['80918668'] = $hotel->getName();
             $customFields['80918648'] = $hotel->getAddress();
         }
 
-        if ($reservation != null) {
-            $roomName = $reservation->getRoom()->getName() . ' ('.$reservation->getRoom()->getType().')';
+        if (null !== $reservation) {
+            $roomName = $reservation->getRoom()->getName().' ('.$reservation->getRoom()->getType().')';
             $customFields['80531287'] = $roomName;
             $customFields['80531307'] = $reservation->getBookedDate()->format('Y-m-d');
             $customFields['80924568'] = $reservation->getRoomPrice().' '.$reservation->getHotel()->getCurrency()->getCode();
             $customFields['80918728'] = $reservation->getBookedStartTime()->format('H:i').' - '.$reservation->getBookedEndTime()->format('H:i');
         }
 
-        $customFields['80918708'] = $language->getName();
+        $customFields['80918708'] = $request->language->getName();
 
         $client = new ZendeskAPI($this->getServiceManager()->get('Config')['zendesk']['subdomain']);
         $client->setAuth(
@@ -73,27 +58,25 @@ class ZendeskService extends AbstractService
 
         $response = $client->users()->createOrUpdate(
             [
-                'email' => $email,
-                'name' => $firstName.' '.strtoupper($lastName),
-                'phone' => !empty($phoneNumber)? $phoneNumber:($reservation != null ? $reservation->getCustomer()->getSimplePhoneNumber() : ''),
-                'role' => 'end-user'
+                'email' => $request->email,
+                'name' => $request->firstName.' '.strtoupper($request->lastName),
+                'phone' => !empty($request->phoneNumber) ? $request->phoneNumber : (null !== $reservation ? $reservation->getCustomer()->getSimplePhoneNumber() : ''),
+                'role' => 'end-user',
             ]
         );
-
-        //$this->getLogger()->addError(var_export($endUser, true));
 
         $client->tickets()->create(
             [
                 'requester_id' => $response->user->id,
-                'subject'      => strlen($message) > 50 ? substr($message, 0, 50) . '...' : $message,
+                'subject'      => strlen($request->message) > 50 ? substr($request->message, 0, 50).'...' : $request->message,
                 'comment' =>
                     [
-                        'body'  => $message
+                        'body'  => $request->message
                     ],
                 'priority'      => 'normal',
                 'type'          => 'question',
                 'status'        => 'new',
-                'custom_fields' => $customFields
+                'custom_fields' => $customFields,
             ]
         );
 
