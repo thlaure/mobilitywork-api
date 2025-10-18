@@ -4,6 +4,7 @@ namespace MobilityWork\Service;
 
 use MobilityWork\Domain\Model\Ticket\CreateCustomerTicketRequest;
 use MobilityWork\Domain\Model\Ticket\CreateHotelTicketRequest;
+use MobilityWork\Domain\Model\Ticket\CreatePartnersTicketRequest;
 use MobilityWork\Domain\Model\Ticket\CreatePressTicketRequest;
 use MobilityWork\Repository\ReservationRepository;
 use Zendesk\API\HttpClient as ZendeskAPI;
@@ -175,52 +176,39 @@ class ZendeskService extends AbstractService
         return true;
     }
 
-    public function createPartnersTicket(
-        $gender,
-        $firstName,
-        $lastName,
-        $phoneNumber,
-        $email,
-        $message,
-        $language,
-        $domainConfig)
+    public function createPartnersTicket(CreatePartnersTicketRequest $request): bool
     {
         $customFields = [];
         $customFields['80924888'] = 'partner';
-        $customFields['80918708'] = $language->getName();
+        $customFields['80918708'] = $request->language->getName();
 
         $client = new ZendeskAPI($this->getServiceManager()->get('Config')['zendesk']['subdomain']);
         $client->setAuth(
             'basic',
             [
                 'username' => $this->getServiceManager()->get('Config')['zendesk']['username'],
-                'token' => $this->getServiceManager()->get('Config')['zendesk']['token']
+                'token' => $this->getServiceManager()->get('Config')['zendesk']['token'],
             ]
         );
 
-        $response = $client->users()->createOrUpdate(
-            [
-                'email' => $email,
-                'name' => $firstName.' '.strtoupper($lastName),
-                'phone' => $phoneNumber,
-                'role' => 'end-user',
-            ]
-        );
+        $response = $client->users()->createOrUpdate([
+            'email' => $request->email,
+            'name' => $request->firstName.' '.strtoupper($request->lastName),
+            'phone' => $request->phoneNumber,
+            'role' => 'end-user',
+        ]);
 
-        $client->tickets()->create(
-            [
-                'requester_id' => $response->user->id,
-                'subject' => strlen($message) > 50 ? substr($message, 0, 50) . '...' : $message,
-                'comment' =>
-                    [
-                        'body' => $message
-                    ],
-                'priority' => 'normal',
-                'type' => 'question',
-                'status' => 'new',
-                'custom_fields' => $customFields
-            ]
-        );
+        $client->tickets()->create([
+            'requester_id' => $response->user->id,
+            'subject' => 50 < strlen($request->message) ? substr($request->message, 0, 50).'...' : $request->message,
+            'comment' => [
+                'body' => $request->message,
+            ],
+            'priority' => 'normal',
+            'type' => 'question',
+            'status' => 'new',
+            'custom_fields' => $customFields,
+        ]);
 
         return true;
     }
