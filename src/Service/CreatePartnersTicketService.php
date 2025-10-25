@@ -12,7 +12,7 @@ class CreatePartnersTicketService
     public function __construct(
         private readonly ZendeskService $zendeskService,
         private readonly ReservationRepository $reservationRepository,
-    ) {  
+    ) {
     }
 
     public function __invoke(CreatePartnersTicketRequest $request): void

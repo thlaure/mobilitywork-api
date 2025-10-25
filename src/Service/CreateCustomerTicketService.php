@@ -64,11 +64,11 @@ class CreateCustomerTicketService
             'requester_id' => $userId,
             'subject' => 50 < strlen($request->message) ? substr($request->message, 0, 50).'...' : $request->message,
             'comment' => [
-                'body'  => $request->message,
+                'body' => $request->message,
             ],
-            'priority'      => 'normal',
-            'type'          => 'question',
-            'status'        => 'new',
+            'priority' => 'normal',
+            'type' => 'question',
+            'status' => 'new',
             'custom_fields' => $customFields,
         ]);
     }
