@@ -13,7 +13,7 @@ class Reservation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id = null; // @phpstan-ignore-line
 
     #[ORM\Column(length: 255)]
     private ?string $reference = null;

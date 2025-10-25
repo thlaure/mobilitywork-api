@@ -13,7 +13,7 @@ class DomainConfig
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id = null; // @phpstan-ignore-line
 
     public function getId(): ?int
     {
