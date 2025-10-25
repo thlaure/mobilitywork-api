@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MobilityWork\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use MobilityWork\Repository\HotelRepository;
 
@@ -25,7 +27,18 @@ class Hotel
     private ?Currency $currency = null;
 
     #[ORM\ManyToOne]
-    private ?HotelContact $hotelContact = null;
+    private ?HotelContact $mainContact = null;
+
+    /**
+     * @var Collection<int, HotelContact>
+     */
+    #[ORM\OneToMany(targetEntity: HotelContact::class, mappedBy: 'hotel')]
+    private Collection $contacts;
+
+    public function __construct()
+    {
+        $this->contacts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -68,14 +81,44 @@ class Hotel
         return $this;
     }
 
-    public function getHotelContact(): ?HotelContact
+    public function getMainContact(): ?HotelContact
     {
-        return $this->hotelContact;
+        return $this->mainContact;
     }
 
-    public function setHotelContact(?HotelContact $hotelContact): static
+    public function setMainContact(?HotelContact $mainContact): static
     {
-        $this->hotelContact = $hotelContact;
+        $this->mainContact = $mainContact;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, HotelContact>
+     */
+    public function getContacts(): Collection
+    {
+        return $this->contacts;
+    }
+
+    public function addContact(HotelContact $contact): static
+    {
+        if (!$this->contacts->contains($contact)) {
+            $this->contacts->add($contact);
+            $contact->setHotel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContact(HotelContact $contact): static
+    {
+        if ($this->contacts->removeElement($contact)) {
+            // set the owning side to null (unless already changed)
+            if ($contact->getHotel() === $this) {
+                $contact->setHotel(null);
+            }
+        }
 
         return $this;
     }

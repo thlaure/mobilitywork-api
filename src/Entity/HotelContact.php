@@ -18,6 +18,10 @@ class HotelContact
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
+    #[ORM\ManyToOne(inversedBy: 'contacts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Hotel $hotel = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -31,6 +35,18 @@ class HotelContact
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getHotel(): ?Hotel
+    {
+        return $this->hotel;
+    }
+
+    public function setHotel(?Hotel $hotel): static
+    {
+        $this->hotel = $hotel;
 
         return $this;
     }
