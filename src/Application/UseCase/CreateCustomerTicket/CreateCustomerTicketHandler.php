@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreateCustomerTicket;
 
+use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 use MobilityWork\Repository\ReservationRepository;
 use MobilityWork\Service\ZendeskService;
 
@@ -32,25 +33,25 @@ class CreateCustomerTicketHandler
         }
 
         $customFields = [];
-        $customFields['80924888'] = 'customer';
-        $customFields['80531327'] = $command->request->reservationNumber;
+        $customFields[ZendeskCustomFields::TICKET_TYPE] = 'customer';
+        $customFields[ZendeskCustomFields::RESERVATION_NUMBER] = $command->request->reservationNumber;
 
         if (null !== $hotel) {
-            $hotelContact = $this->getServiceManager()->get('service.hotel_contacts')->getMainHotelContact($hotel);
-            $customFields['80531267'] = $hotelContact?->getEmail();
-            $customFields['80918668'] = $hotel->getName();
-            $customFields['80918648'] = $hotel->getAddress();
+            $hotelContact = $hotel->getMainContact();
+            $customFields[ZendeskCustomFields::HOTEL_CONTACT_EMAIL] = $hotelContact?->getEmail();
+            $customFields[ZendeskCustomFields::HOTEL_NAME] = $hotel->getName();
+            $customFields[ZendeskCustomFields::HOTEL_ADDRESS] = $hotel->getAddress();
         }
 
         if (null !== $reservation) {
             $roomName = $reservation->getRoom()->getName().' ('.$reservation->getRoom()->getType().')';
-            $customFields['80531287'] = $roomName;
-            $customFields['80531307'] = $reservation->getBookedDate()->format('Y-m-d');
-            $customFields['80924568'] = $reservation->getRoomPrice().' '.$reservation->getHotel()->getCurrency()->getCode();
-            $customFields['80918728'] = $reservation->getBookedStartTime()->format('H:i').' - '.$reservation->getBookedEndTime()->format('H:i');
+            $customFields[ZendeskCustomFields::ROOM_NAME] = $roomName;
+            $customFields[ZendeskCustomFields::BOOKED_DATE] = $reservation->getBookedDate()->format('Y-m-d');
+            $customFields[ZendeskCustomFields::ROOM_PRICE] = $reservation->getRoomPrice().' '.$reservation->getHotel()->getCurrency()->getCode();
+            $customFields[ZendeskCustomFields::BOOKED_TIME] = $reservation->getBookedStartTime()->format('H:i').' - '.$reservation->getBookedEndTime()->format('H:i');
         }
 
-        $customFields['80918708'] = $command->request->language->getName();
+        $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $command->request->language->getName();
 
         $userId = $this->zendeskService->createOrUpdateUser([
             'email' => $command->request->email,

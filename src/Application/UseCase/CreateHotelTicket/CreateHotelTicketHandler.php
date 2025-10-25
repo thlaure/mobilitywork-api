@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreateHotelTicket;
 
+use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 use MobilityWork\Repository\ReservationRepository;
 use MobilityWork\Service\ZendeskService;
 
@@ -18,10 +19,10 @@ class CreateHotelTicketHandler
     public function __invoke(CreateHotelTicketCommand $command): void
     {
         $customFields = [];
-        $customFields['80924888'] = 'hotel';
-        $customFields['80918668'] = $command->request->hotelName;
-        $customFields['80918648'] = $command->request->city;
-        $customFields['80918708'] = $command->request->language->getName();
+        $customFields[ZendeskCustomFields::TICKET_TYPE] = 'hotel';
+        $customFields[ZendeskCustomFields::HOTEL_NAME] = $command->request->hotelName;
+        $customFields[ZendeskCustomFields::CITY] = $command->request->city;
+        $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $command->request->language->getName();
 
         $userId = $this->zendeskService->createOrUpdateUser([
             'email' => $command->request->email,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreatePartnersTicket;
 
+use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 use MobilityWork\Repository\ReservationRepository;
 use MobilityWork\Service\ZendeskService;
 
@@ -18,8 +19,8 @@ class CreatePartnersTicketHandler
     public function __invoke(CreatePartnersTicketCommand $command): void
     {
         $customFields = [];
-        $customFields['80924888'] = 'partner';
-        $customFields['80918708'] = $command->request->language->getName();
+        $customFields[ZendeskCustomFields::TICKET_TYPE] = 'partner';
+        $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $command->request->language->getName();
 
         $userId = $this->zendeskService->createOrUpdateUser([
             'email' => $command->request->email,
