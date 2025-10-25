@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreatePressTicket;
 
+use MobilityWork\Domain\Port\Out\TicketCreatorPort;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 use MobilityWork\Repository\ReservationRepository;
-use MobilityWork\Service\ZendeskService;
 
 class CreatePressTicketHandler
 {
     public function __construct(
-        private readonly ZendeskService $zendeskService,
+        private readonly TicketCreatorPort $ticketCreator,
         private readonly ReservationRepository $reservationRepository,
     ) {
     }
@@ -23,7 +23,7 @@ class CreatePressTicketHandler
         $customFields[ZendeskCustomFields::CITY] = $command->request->city;
         $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $command->request->language->getName();
 
-        $userId = $this->zendeskService->createOrUpdateUser([
+        $userId = $this->ticketCreator->createOrUpdateUser([
             'email' => $command->request->email,
             'name' => $command->request->firstName.' '.strtoupper($command->request->lastName),
             'phone' => $command->request->phoneNumber,
@@ -31,7 +31,7 @@ class CreatePressTicketHandler
             'user_fields' => ['press_media' => $command->request->media],
         ]);
 
-        $this->zendeskService->createTicket([
+        $this->ticketCreator->createTicket([
             'requester_id' => $userId,
             'subject' => 50 < strlen($command->request->message) ? substr($command->request->message, 0, 50).'...' : $command->request->message,
             'comment' => [

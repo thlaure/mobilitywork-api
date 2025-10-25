@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Service;
+namespace MobilityWork\Infrastructure\Zendesk;
 
+use MobilityWork\Domain\Port\Out\TicketCreatorPort;
 use Psr\Log\LoggerInterface;
 use Zendesk\API\HttpClient as ZendeskAPI;
 
-class ZendeskService
+class ZendeskTicketCreatorAdapter implements TicketCreatorPort
 {
     public function __construct(
         private readonly ZendeskAPI $client,
