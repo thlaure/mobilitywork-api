@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MobilityWork\Service;
 
 use Psr\Log\LoggerInterface;
 use Zendesk\API\HttpClient as ZendeskAPI;
 
-class ZendeskService extends AbstractService
+class ZendeskService
 {
     public function __construct(
         private readonly ZendeskAPI $client,
