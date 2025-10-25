@@ -15,30 +15,21 @@ class CreatePartnersTicketService
     ) {  
     }
 
-    public function __invoke(CreatePartnersTicketRequest $request): bool
+    public function __invoke(CreatePartnersTicketRequest $request): void
     {
         $customFields = [];
         $customFields['80924888'] = 'partner';
         $customFields['80918708'] = $request->language->getName();
 
-        $client = new ZendeskAPI($this->getServiceManager()->get('Config')['zendesk']['subdomain']);
-        $client->setAuth(
-            'basic',
-            [
-                'username' => $this->getServiceManager()->get('Config')['zendesk']['username'],
-                'token' => $this->getServiceManager()->get('Config')['zendesk']['token'],
-            ]
-        );
-
-        $response = $client->users()->createOrUpdate([
+        $userId = $this->zendeskService->createOrUpdateUser([
             'email' => $request->email,
             'name' => $request->firstName.' '.strtoupper($request->lastName),
             'phone' => $request->phoneNumber,
             'role' => 'end-user',
         ]);
 
-        $client->tickets()->create([
-            'requester_id' => $response->user->id,
+        $this->zendeskService->createTicket([
+            'requester_id' => $userId,
             'subject' => 50 < strlen($request->message) ? substr($request->message, 0, 50).'...' : $request->message,
             'comment' => [
                 'body' => $request->message,
@@ -48,7 +39,5 @@ class CreatePartnersTicketService
             'status' => 'new',
             'custom_fields' => $customFields,
         ]);
-
-        return true;
     }
 }

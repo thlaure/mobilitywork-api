@@ -15,50 +15,31 @@ class CreatePressTicketService
     ) {
     }
 
-    public function __invoke(CreatePressTicketRequest $request): bool
+    public function __invoke(CreatePressTicketRequest $request): void
     {
         $customFields = [];
         $customFields['80924888'] = 'press';
         $customFields['80918648'] = $request->city;
         $customFields['80918708'] = $request->language->getName();
 
-        $client = new ZendeskAPI($this->getServiceManager()->get('Config')['zendesk']['subdomain']);
-        $client->setAuth(
-            'basic',
-            [
-                'username' => $this->getServiceManager()->get('Config')['zendesk']['username'],
-                'token' => $this->getServiceManager()->get('Config')['zendesk']['token'],
-            ]
-        );
+        $userId = $this->zendeskService->createOrUpdateUser([
+            'email' => $request->email,
+            'name' => $request->firstName.' '.strtoupper($request->lastName),
+            'phone' => $request->phoneNumber,
+            'role' => 'end-user',
+            'user_fields' => ['press_media' => $request->media],
+        ]);
 
-        $response = $client->users()->createOrUpdate(
-            [
-                'email' => $request->email,
-                'name' => $request->firstName.' '.strtoupper($request->lastName),
-                'phone' => $request->phoneNumber,
-                'role' => 'end-user',
-                'user_fields' => ['press_media' => $request->media],
-            ]
-        );
-
-        try {
-            $client->tickets()->create(
-                [
-                    'requester_id' => $response->user->id,
-                    'subject' => 50 < strlen($request->message) ? substr($request->message, 0, 50).'...' : $request->message,
-                    'comment' => [
-                        'body' => $request->message,
-                    ],
-                    'priority' => 'normal',
-                    'type' => 'question',
-                    'status' => 'new',
-                    'custom_fields' => $customFields,
-                ]
-            );
-        } catch (\Exception $e) {
-            $this->getLogger()->addError(var_export($response->user->id, true));
-        }
-
-        return true;
+        $this->zendeskService->createTicket([
+            'requester_id' => $userId,
+            'subject' => 50 < strlen($request->message) ? substr($request->message, 0, 50).'...' : $request->message,
+            'comment' => [
+                'body' => $request->message,
+            ],
+            'priority' => 'normal',
+            'type' => 'question',
+            'status' => 'new',
+            'custom_fields' => $customFields,
+        ]);
     }
 }
