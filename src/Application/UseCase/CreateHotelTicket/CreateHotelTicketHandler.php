@@ -6,13 +6,11 @@ namespace MobilityWork\Application\UseCase\CreateHotelTicket;
 
 use MobilityWork\Domain\Port\Out\TicketCreatorPort;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
-use MobilityWork\Repository\ReservationRepository;
 
 class CreateHotelTicketHandler
 {
     public function __construct(
         private readonly TicketCreatorPort $ticketCreator,
-        private readonly ReservationRepository $reservationRepository,
     ) {
     }
 
