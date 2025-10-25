@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Service;
+namespace MobilityWork\Application\UseCase\CreateCustomerTicket;
 
-use MobilityWork\Domain\Model\Ticket\CreateCustomerTicketRequest;
-use MobilityWork\Entity\Reservation;
 use MobilityWork\Repository\ReservationRepository;
+use MobilityWork\Service\ZendeskService;
 
-class CreateCustomerTicketService
+class CreateCustomerTicketHandler
 {
     public function __construct(
         private readonly ZendeskService $zendeskService,
@@ -16,16 +15,16 @@ class CreateCustomerTicketService
     ) {
     }
 
-    public function __invoke(CreateCustomerTicketRequest $request): void
+    public function __invoke(CreateCustomerTicketCommand $command): void
     {
         /** @var ?Reservation $reservation */
         $reservation = null;
 
-        if (!empty($request->reservationNumber)) {
-            $reservation = $this->reservationRepository->getByRef($request->reservationNumber);
+        if (!empty($command->request->reservationNumber)) {
+            $reservation = $this->reservationRepository->getByRef($command->request->reservationNumber);
 
             if (null !== $reservation) {
-                $hotel = $request->hotel;
+                $hotel = $command->request->hotel;
                 if (null === $hotel) {
                     $hotel = $reservation->getHotel();
                 }
@@ -34,7 +33,7 @@ class CreateCustomerTicketService
 
         $customFields = [];
         $customFields['80924888'] = 'customer';
-        $customFields['80531327'] = $request->reservationNumber;
+        $customFields['80531327'] = $command->request->reservationNumber;
 
         if (null !== $hotel) {
             $hotelContact = $this->getServiceManager()->get('service.hotel_contacts')->getMainHotelContact($hotel);
@@ -51,20 +50,20 @@ class CreateCustomerTicketService
             $customFields['80918728'] = $reservation->getBookedStartTime()->format('H:i').' - '.$reservation->getBookedEndTime()->format('H:i');
         }
 
-        $customFields['80918708'] = $request->language->getName();
+        $customFields['80918708'] = $command->request->language->getName();
 
         $userId = $this->zendeskService->createOrUpdateUser([
-            'email' => $request->email,
-            'name' => $request->firstName.' '.strtoupper($request->lastName),
-            'phone' => !empty($request->phoneNumber) ? $request->phoneNumber : (null !== $reservation ? $reservation->getCustomer()->getSimplePhoneNumber() : ''),
+            'email' => $command->request->email,
+            'name' => $command->request->firstName.' '.strtoupper($command->request->lastName),
+            'phone' => !empty($command->request->phoneNumber) ? $command->request->phoneNumber : (null !== $reservation ? $reservation->getCustomer()->getSimplePhoneNumber() : ''),
             'role' => 'end-user',
         ]);
 
         $this->zendeskService->createTicket([
             'requester_id' => $userId,
-            'subject' => 50 < strlen($request->message) ? substr($request->message, 0, 50).'...' : $request->message,
+            'subject' => 50 < strlen($command->request->message) ? substr($command->request->message, 0, 50).'...' : $command->request->message,
             'comment' => [
-                'body' => $request->message,
+                'body' => $command->request->message,
             ],
             'priority' => 'normal',
             'type' => 'question',

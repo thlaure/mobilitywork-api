@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Service;
+namespace MobilityWork\Application\UseCase\CreatePartnersTicket;
 
-use MobilityWork\Domain\Model\Ticket\CreatePartnersTicketRequest;
 use MobilityWork\Repository\ReservationRepository;
+use MobilityWork\Service\ZendeskService;
 
-class CreatePartnersTicketService
+class CreatePartnersTicketHandler
 {
     public function __construct(
         private readonly ZendeskService $zendeskService,
@@ -15,24 +15,24 @@ class CreatePartnersTicketService
     ) {
     }
 
-    public function __invoke(CreatePartnersTicketRequest $request): void
+    public function __invoke(CreatePartnersTicketCommand $command): void
     {
         $customFields = [];
         $customFields['80924888'] = 'partner';
-        $customFields['80918708'] = $request->language->getName();
+        $customFields['80918708'] = $command->request->language->getName();
 
         $userId = $this->zendeskService->createOrUpdateUser([
-            'email' => $request->email,
-            'name' => $request->firstName.' '.strtoupper($request->lastName),
-            'phone' => $request->phoneNumber,
+            'email' => $command->request->email,
+            'name' => $command->request->firstName.' '.strtoupper($command->request->lastName),
+            'phone' => $command->request->phoneNumber,
             'role' => 'end-user',
         ]);
 
         $this->zendeskService->createTicket([
             'requester_id' => $userId,
-            'subject' => 50 < strlen($request->message) ? substr($request->message, 0, 50).'...' : $request->message,
+            'subject' => 50 < strlen($command->request->message) ? substr($command->request->message, 0, 50).'...' : $command->request->message,
             'comment' => [
-                'body' => $request->message,
+                'body' => $command->request->message,
             ],
             'priority' => 'normal',
             'type' => 'question',
