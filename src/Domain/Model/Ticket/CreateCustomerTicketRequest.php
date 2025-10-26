@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MobilityWork\Domain\Model\Ticket;
 
-use MobilityWork\Entity\DomainConfig;
-use MobilityWork\Entity\Hotel;
-use MobilityWork\Entity\Language;
+use MobilityWork\Domain\Model\Entity\DomainConfig;
+use MobilityWork\Domain\Model\Entity\Hotel;
+use MobilityWork\Domain\Model\Entity\Language;
 
 class CreateCustomerTicketRequest
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Entity;
+namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Repository\CustomerRepository;
+use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\CustomerRepository;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 class Customer

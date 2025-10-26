@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Entity;
+namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Repository\CurrencyRepository;
+use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\CurrencyRepository;
 
 #[ORM\Entity(repositoryClass: CurrencyRepository::class)]
 class Currency

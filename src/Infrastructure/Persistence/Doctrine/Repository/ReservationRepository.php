@@ -2,24 +2,29 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Repository;
+namespace MobilityWork\Infrastructure\Persistence\Doctrine\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use MobilityWork\Entity\Room;
+use MobilityWork\Domain\Model\Entity\Reservation;
 
 /**
- * @extends ServiceEntityRepository<Room>
+ * @extends ServiceEntityRepository<Reservation>
  */
-class RoomRepository extends ServiceEntityRepository
+class ReservationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Room::class);
+        parent::__construct($registry, Reservation::class);
+    }
+
+    public function getByRef(string $reference): ?Reservation
+    {
+        return $this->findOneBy(['reference' => $reference]);
     }
 
     //    /**
-    //     * @return Room[] Returns an array of Room objects
+    //     * @return Reservation[] Returns an array of Reservation objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -33,7 +38,7 @@ class RoomRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Room
+    //    public function findOneBySomeField($value): ?Reservation
     //    {
     //        return $this->createQueryBuilder('r')
     //            ->andWhere('r.exampleField = :val')

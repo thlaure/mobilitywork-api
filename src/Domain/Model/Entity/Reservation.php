@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Entity;
+namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Repository\ReservationRepository;
+use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\ReservationRepository;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation

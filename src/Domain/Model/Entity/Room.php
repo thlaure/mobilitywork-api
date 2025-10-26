@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Entity;
+namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Repository\LanguageRepository;
+use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\RoomRepository;
 
-#[ORM\Entity(repositoryClass: LanguageRepository::class)]
-class Language
+#[ORM\Entity(repositoryClass: RoomRepository::class)]
+class Room
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,6 +17,9 @@ class Language
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $type = null;
 
     public function getId(): ?int
     {
@@ -31,6 +34,18 @@ class Language
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

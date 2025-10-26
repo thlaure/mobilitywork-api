@@ -8,13 +8,15 @@ interface TicketCreatorPort
 {
     /**
      * @param array<string, mixed> $userData
-     * @return int The ID of the created or updated user.
+     *
+     * @return int the ID of the created or updated user
      */
     public function createOrUpdateUser(array $userData): int;
 
     /**
      * @param array<string, mixed> $ticketData
-     * @return int The ID of the created ticket.
+     *
+     * @return int the ID of the created ticket
      */
     public function createTicket(array $ticketData): int;
 }

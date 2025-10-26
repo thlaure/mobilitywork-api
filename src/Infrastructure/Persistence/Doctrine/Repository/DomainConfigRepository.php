@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Repository;
+namespace MobilityWork\Infrastructure\Persistence\Doctrine\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use MobilityWork\Entity\DomainConfig;
+use MobilityWork\Domain\Model\Entity\DomainConfig;
 
 /**
  * @extends ServiceEntityRepository<DomainConfig>

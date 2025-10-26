@@ -2,41 +2,41 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Repository;
+namespace MobilityWork\Infrastructure\Persistence\Doctrine\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use MobilityWork\Entity\Hotel;
+use MobilityWork\Domain\Model\Entity\Currency;
 
 /**
- * @extends ServiceEntityRepository<Hotel>
+ * @extends ServiceEntityRepository<Currency>
  */
-class HotelRepository extends ServiceEntityRepository
+class CurrencyRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Hotel::class);
+        parent::__construct($registry, Currency::class);
     }
 
     //    /**
-    //     * @return Hotel[] Returns an array of Hotel objects
+    //     * @return Currency[] Returns an array of Currency objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('h')
-    //            ->andWhere('h.exampleField = :val')
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('h.id', 'ASC')
+    //            ->orderBy('c.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Hotel
+    //    public function findOneBySomeField($value): ?Currency
     //    {
-    //        return $this->createQueryBuilder('h')
-    //            ->andWhere('h.exampleField = :val')
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

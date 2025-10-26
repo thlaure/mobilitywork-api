@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Entity;
+namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Repository\HotelRepository;
+use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\HotelRepository;
 
 #[ORM\Entity(repositoryClass: HotelRepository::class)]
 class Hotel

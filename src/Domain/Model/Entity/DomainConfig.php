@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MobilityWork\Entity;
+namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Repository\DomainConfigRepository;
+use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\DomainConfigRepository;
 
 #[ORM\Entity(repositoryClass: DomainConfigRepository::class)]
 class DomainConfig
