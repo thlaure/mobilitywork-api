@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace MobilityWork\Application\UseCase\CreateCustomerTicket;
 
 use MobilityWork\Domain\Model\Entity\Reservation;
+use MobilityWork\Domain\Port\Out\ReservationRepositoryPort;
 use MobilityWork\Domain\Port\Out\TicketCreatorPort;
-use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\ReservationRepository;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 
 class CreateCustomerTicketHandler
 {
     public function __construct(
         private readonly TicketCreatorPort $ticketCreator,
-        private readonly ReservationRepository $reservationRepository,
+        private readonly ReservationRepositoryPort $reservationRepository,
     ) {
     }
 

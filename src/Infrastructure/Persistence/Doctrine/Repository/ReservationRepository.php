@@ -7,11 +7,12 @@ namespace MobilityWork\Infrastructure\Persistence\Doctrine\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use MobilityWork\Domain\Model\Entity\Reservation;
+use MobilityWork\Domain\Port\Out\ReservationRepositoryPort;
 
 /**
  * @extends ServiceEntityRepository<Reservation>
  */
-class ReservationRepository extends ServiceEntityRepository
+class ReservationRepository extends ServiceEntityRepository implements ReservationRepositoryPort
 {
     public function __construct(ManagerRegistry $registry)
     {

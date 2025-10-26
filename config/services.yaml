@@ -18,5 +18,7 @@ services:
 
     MobilityWork\Domain\Port\Out\TicketCreatorPort: '@MobilityWork\Infrastructure\Zendesk\ZendeskTicketCreatorAdapter'
 
+    MobilityWork\Domain\Port\Out\ReservationRepositoryPort: '@MobilityWork\Infrastructure\Persistence\Doctrine\Repository\ReservationRepository'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
