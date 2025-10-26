@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\ReservationRepository;
 
-#[ORM\Entity(repositoryClass: ReservationRepository::class)]
+#[ORM\Entity]
 class Reservation
 {
     #[ORM\Id]

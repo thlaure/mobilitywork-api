@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\LanguageRepository;
 
-#[ORM\Entity(repositoryClass: LanguageRepository::class)]
+#[ORM\Entity]
 class Language
 {
     #[ORM\Id]

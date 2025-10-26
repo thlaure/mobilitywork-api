@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\RoomRepository;
 
-#[ORM\Entity(repositoryClass: RoomRepository::class)]
+#[ORM\Entity]
 class Room
 {
     #[ORM\Id]

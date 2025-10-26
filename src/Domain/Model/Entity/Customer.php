@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\CustomerRepository;
 
-#[ORM\Entity(repositoryClass: CustomerRepository::class)]
+#[ORM\Entity]
 class Customer
 {
     #[ORM\Id]

@@ -7,9 +7,8 @@ namespace MobilityWork\Domain\Model\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\HotelRepository;
 
-#[ORM\Entity(repositoryClass: HotelRepository::class)]
+#[ORM\Entity]
 class Hotel
 {
     #[ORM\Id]

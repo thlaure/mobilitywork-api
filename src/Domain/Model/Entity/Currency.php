@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use MobilityWork\Infrastructure\Persistence\Doctrine\Repository\CurrencyRepository;
 
-#[ORM\Entity(repositoryClass: CurrencyRepository::class)]
+#[ORM\Entity]
 class Currency
 {
     #[ORM\Id]
