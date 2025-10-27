@@ -10,7 +10,6 @@ use MobilityWork\Domain\Model\Entity\Language;
 class CreatePartnersTicketRequest
 {
     public function __construct(
-        public readonly string $gender,
         public readonly string $firstName,
         public readonly string $lastName,
         public readonly string $phoneNumber,
