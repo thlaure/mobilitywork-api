@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class Reservation
@@ -15,9 +16,13 @@ class Reservation
     private ?int $id = null; // @phpstan-ignore-line
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 1, max: 255)]
     private ?string $reference = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Assert\Positive]
     private ?float $roomPrice = null;
 
     #[ORM\ManyToOne]
@@ -30,9 +35,13 @@ class Reservation
     private ?\DateTime $bookedDate = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\DateTime]
+    #[Assert\GreaterThan('now')]
     private ?\DateTime $bookedStartTime = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\DateTime]
+    #[Assert\GreaterThan(propertyPath: 'bookedStartTime')]
     private ?\DateTime $bookedEndTime = null;
 
     #[ORM\ManyToOne]

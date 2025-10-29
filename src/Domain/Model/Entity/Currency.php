@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MobilityWork\Domain\Model\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 class Currency
@@ -15,6 +16,8 @@ class Currency
     private ?int $id = null; // @phpstan-ignore-line
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 1, max: 255)]
     private ?string $code = null;
 
     public function getId(): ?int
