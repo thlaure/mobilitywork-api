@@ -7,15 +7,21 @@ namespace MobilityWork\Infrastructure\Persistence\Doctrine\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use MobilityWork\Domain\Model\Entity\Language;
+use MobilityWork\Domain\Port\Out\LanguageRepositoryPort;
 
 /**
  * @extends ServiceEntityRepository<Language>
  */
-class LanguageRepository extends ServiceEntityRepository
+class LanguageRepository extends ServiceEntityRepository implements LanguageRepositoryPort
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Language::class);
+    }
+
+    public function findOneById(int $id): ?Language
+    {
+        return $this->find($id);
     }
 
     //    /**

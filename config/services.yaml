@@ -20,5 +20,9 @@ services:
 
     MobilityWork\Domain\Port\Out\ReservationRepositoryPort: '@MobilityWork\Infrastructure\Persistence\Doctrine\Repository\ReservationRepository'
 
+    MobilityWork\Domain\Port\Out\HotelRepositoryPort: '@MobilityWork\Infrastructure\Persistence\Doctrine\Repository\HotelRepository'
+
+    MobilityWork\Domain\Port\Out\LanguageRepositoryPort: '@MobilityWork\Infrastructure\Persistence\Doctrine\Repository\LanguageRepository'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -7,15 +7,21 @@ namespace MobilityWork\Infrastructure\Persistence\Doctrine\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use MobilityWork\Domain\Model\Entity\Hotel;
+use MobilityWork\Domain\Port\Out\HotelRepositoryPort;
 
 /**
  * @extends ServiceEntityRepository<Hotel>
  */
-class HotelRepository extends ServiceEntityRepository
+class HotelRepository extends ServiceEntityRepository implements HotelRepositoryPort
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Hotel::class);
+    }
+
+    public function findOneById(int $id): ?Hotel
+    {
+        return $this->find($id);
     }
 
     //    /**
