@@ -28,6 +28,9 @@ final class CreateHotelTicketRequest
         #[Assert\NotBlank]
         #[Assert\Length(min: 1, max: 255)]
         public readonly string $city,
+        #[Assert\NotBlank]
+        #[Assert\Url]
+        #[Assert\Length(min: 1, max: 255)]
         public readonly string $website,
         #[Assert\NotBlank]
         #[Assert\Length(min: 1, max: 255)]
