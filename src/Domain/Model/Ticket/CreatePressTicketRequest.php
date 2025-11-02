@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MobilityWork\Domain\Model\Ticket;
 
-use MobilityWork\Domain\Model\Entity\DomainConfig;
 use MobilityWork\Domain\Model\Entity\Language;
 
 class CreatePressTicketRequest
@@ -21,7 +20,6 @@ class CreatePressTicketRequest
         public readonly string $message,
         public readonly string $reservationNumber,
         public readonly Language $language,
-        public readonly DomainConfig $domainConfig,
     ) {
     }
 }

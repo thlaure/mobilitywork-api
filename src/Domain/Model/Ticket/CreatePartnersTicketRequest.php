@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MobilityWork\Domain\Model\Ticket;
 
-use MobilityWork\Domain\Model\Entity\DomainConfig;
 use MobilityWork\Domain\Model\Entity\Language;
 
 class CreatePartnersTicketRequest
@@ -16,7 +15,6 @@ class CreatePartnersTicketRequest
         public readonly string $email,
         public readonly string $message,
         public readonly Language $language,
-        public readonly DomainConfig $domainConfig,
     ) {
     }
 }
