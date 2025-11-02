@@ -4,22 +4,36 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreatePressTicket;
 
+use MobilityWork\Domain\Model\Entity\Language;
+use MobilityWork\Domain\Port\Out\LanguageRepositoryPort;
 use MobilityWork\Domain\Port\Out\TicketCreatorPort;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 class CreatePressTicketHandler
 {
     public function __construct(
         private readonly TicketCreatorPort $ticketCreator,
+        private readonly LanguageRepositoryPort $languageRepository,
     ) {
     }
 
     public function __invoke(CreatePressTicketCommand $command): void
     {
+        /** @var ?Language $language */
+        $language = null;
+        if (null !== $command->request->languageId) {
+            $language = $this->languageRepository->findOneById($command->request->languageId);
+        }
+
         $customFields = [];
         $customFields[ZendeskCustomFields::TICKET_TYPE] = 'press';
         $customFields[ZendeskCustomFields::CITY] = $command->request->city;
-        $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $command->request->language->getName();
+
+        if (null !== $language) {
+            $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $language->getName();
+        }
 
         $userId = $this->ticketCreator->createOrUpdateUser([
             'email' => $command->request->email,

@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreateCustomerTicket;
 
+use MobilityWork\Domain\Model\Entity\Hotel;
+use MobilityWork\Domain\Model\Entity\Language;
 use MobilityWork\Domain\Model\Entity\Reservation;
+use MobilityWork\Domain\Port\Out\HotelRepositoryPort;
+use MobilityWork\Domain\Port\Out\LanguageRepositoryPort;
 use MobilityWork\Domain\Port\Out\ReservationRepositoryPort;
 use MobilityWork\Domain\Port\Out\TicketCreatorPort;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 class CreateCustomerTicketHandler
 {
     public function __construct(
         private readonly TicketCreatorPort $ticketCreator,
         private readonly ReservationRepositoryPort $reservationRepository,
+        private readonly HotelRepositoryPort $hotelRepository,
+        private readonly LanguageRepositoryPort $languageRepository,
     ) {
     }
 
@@ -21,12 +29,23 @@ class CreateCustomerTicketHandler
     {
         /** @var ?Reservation $reservation */
         $reservation = null;
+        /** @var ?Hotel $hotel */
+        $hotel = null;
+        /** @var ?Language $language */
+        $language = null;
+
+        if (null !== $command->request->languageId) {
+            $language = $this->languageRepository->findOneById($command->request->languageId);
+        }
+
+        if (null !== $command->request->hotelId) {
+            $hotel = $this->hotelRepository->findOneById($command->request->hotelId);
+        }
 
         if (!empty($command->request->reservationNumber)) {
             $reservation = $this->reservationRepository->getByRef($command->request->reservationNumber);
 
             if (null !== $reservation) {
-                $hotel = $command->request->hotel;
                 if (null === $hotel) {
                     $hotel = $reservation->getHotel();
                 }
@@ -52,7 +71,9 @@ class CreateCustomerTicketHandler
             $customFields[ZendeskCustomFields::BOOKED_TIME] = $reservation->getBookedStartTime()->format('H:i').' - '.$reservation->getBookedEndTime()->format('H:i');
         }
 
-        $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $command->request->language->getName();
+        if (null !== $language) {
+            $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $language->getName();
+        }
 
         $userId = $this->ticketCreator->createOrUpdateUser([
             'email' => $command->request->email,
