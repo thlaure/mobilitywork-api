@@ -6,7 +6,7 @@ namespace MobilityWork\Domain\Model\Ticket;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateCustomerTicketRequest
+final class CreateCustomerTicketRequest
 {
     public function __construct(
         #[Assert\NotBlank]
@@ -27,7 +27,9 @@ class CreateCustomerTicketRequest
         public readonly string $message,
         #[Assert\Length(min: 1, max: 255)]
         public readonly ?string $reservationNumber = null,
+        #[Assert\Positive]
         public readonly ?int $hotelId = null,
+        #[Assert\Positive]
         public readonly ?int $languageId = null,
     ) {
     }
