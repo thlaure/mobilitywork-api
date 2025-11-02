@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreatePressTicket;
 
-use MobilityWork\Domain\Model\Entity\Language;
-use MobilityWork\Domain\Port\Out\LanguageRepositoryPort;
 use MobilityWork\Domain\Port\Out\TicketCreatorPort;
-use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -15,44 +12,16 @@ class CreatePressTicketHandler
 {
     public function __construct(
         private readonly TicketCreatorPort $ticketCreator,
-        private readonly LanguageRepositoryPort $languageRepository,
+        private readonly PressTicketDataBuilder $pressTicketDataBuilder,
     ) {
     }
 
     public function __invoke(CreatePressTicketCommand $command): void
     {
-        /** @var ?Language $language */
-        $language = null;
-        if (null !== $command->request->languageId) {
-            $language = $this->languageRepository->findOneById($command->request->languageId);
-        }
+        $ticketData = $this->pressTicketDataBuilder->build($command);
 
-        $customFields = [];
-        $customFields[ZendeskCustomFields::TICKET_TYPE] = 'press';
-        $customFields[ZendeskCustomFields::CITY] = $command->request->city;
+        $userId = $this->ticketCreator->createOrUpdateUser($ticketData->user);
 
-        if (null !== $language) {
-            $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $language->getName();
-        }
-
-        $userId = $this->ticketCreator->createOrUpdateUser([
-            'email' => $command->request->email,
-            'name' => $command->request->firstName.' '.strtoupper($command->request->lastName),
-            'phone' => $command->request->phoneNumber,
-            'role' => 'end-user',
-            'user_fields' => ['press_media' => $command->request->media],
-        ]);
-
-        $this->ticketCreator->createTicket([
-            'requester_id' => $userId,
-            'subject' => 50 < strlen($command->request->message) ? substr($command->request->message, 0, 50).'...' : $command->request->message,
-            'comment' => [
-                'body' => $command->request->message,
-            ],
-            'priority' => 'normal',
-            'type' => 'question',
-            'status' => 'new',
-            'custom_fields' => $customFields,
-        ]);
+        $this->ticketCreator->createTicket($ticketData->ticket + ['requester_id' => $userId]);
     }
 }
