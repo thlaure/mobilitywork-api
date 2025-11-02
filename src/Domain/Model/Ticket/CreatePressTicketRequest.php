@@ -21,7 +21,9 @@ final class CreatePressTicketRequest
         #[Assert\NotBlank]
         #[Assert\Length(min: 1, max: 50)]
         public readonly string $phoneNumber,
+        #[Assert\NotBlank]
         #[Assert\Email]
+        #[Assert\Length(min: 1, max: 255)]
         public readonly string $email,
         #[Assert\NotBlank]
         #[Assert\Length(min: 1, max: 255)]
