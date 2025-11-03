@@ -31,6 +31,9 @@
         "doctrine/doctrine-fixtures-bundle": "^4.3",
         "friendsofphp/php-cs-fixer": "^3.89",
         "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^12.4",
+        "symfony/browser-kit": "7.3.*",
+        "symfony/css-selector": "7.3.*",
         "symfony/maker-bundle": "^1.64"
     },
     "config": {
@@ -74,7 +77,8 @@
             "@auto-scripts"
         ],
         "phpstan": "./vendor/bin/phpstan analyse",
-        "cs-fixer": "./vendor/bin/php-cs-fixer fix --allow-risky=yes"
+        "csfixer": "./vendor/bin/php-cs-fixer fix --allow-risky=yes",
+        "phpunit": "./vendor/bin/phpunit tests"
     },
     "conflict": {
         "symfony/symfony": "*"
