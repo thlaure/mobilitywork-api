@@ -1,5 +1,19 @@
 
 services:
+  php:
+    image: dunglas/frankenphp
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
+      - "443:443/udp" # HTTP/3
+    volumes:
+      - ./:/app
+      - caddy_data:/data
+      - caddy_config:/config
+
 ###> doctrine/doctrine-bundle ###
   database:
     image: postgres:${POSTGRES_VERSION:-16}-alpine
@@ -22,6 +36,8 @@ services:
 ###< doctrine/doctrine-bundle ###
 
 volumes:
+  caddy_data:
+  caddy_config:
 ###> doctrine/doctrine-bundle ###
   database_data:
 ###< doctrine/doctrine-bundle ###
