@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreateHotelTicket;
 
+use MobilityWork\Application\Service\Finder\LanguageFinder;
 use MobilityWork\Domain\Model\Data\TicketCreationDataDTO;
 use MobilityWork\Domain\Model\Data\TicketDTO;
 use MobilityWork\Domain\Model\Data\UserDTO;
 use MobilityWork\Domain\Model\Entity\Language;
-use MobilityWork\Domain\Port\Out\LanguageRepositoryPort;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 
 final class HotelTicketDataBuilder
 {
     public function __construct(
-        private readonly LanguageRepositoryPort $languageRepository,
+        private readonly LanguageFinder $languageFinder,
     ) {
     }
 
     public function build(CreateHotelTicketCommand $command): TicketCreationDataDTO
     {
         /** @var ?Language $language */
-        $language = $this->findLanguage($command->request->languageId);
+        $language = $this->languageFinder->findById($command->request->languageId);
 
         $customFields = [];
         $customFields[ZendeskCustomFields::TICKET_TYPE] = 'hotel';
@@ -50,14 +50,5 @@ final class HotelTicketDataBuilder
         );
 
         return new TicketCreationDataDTO($user, $ticket);
-    }
-
-    private function findLanguage(?int $languageId): ?Language
-    {
-        if (null === $languageId) {
-            return null;
-        }
-
-        return $this->languageRepository->findOneById($languageId);
     }
 }

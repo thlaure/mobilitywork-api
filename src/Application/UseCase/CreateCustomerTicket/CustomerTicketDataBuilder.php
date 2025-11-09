@@ -4,34 +4,34 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreateCustomerTicket;
 
+use MobilityWork\Application\Service\Finder\HotelFinder;
+use MobilityWork\Application\Service\Finder\LanguageFinder;
+use MobilityWork\Application\Service\Finder\ReservationFinder;
 use MobilityWork\Domain\Model\Data\TicketCreationDataDTO;
 use MobilityWork\Domain\Model\Data\TicketDTO;
 use MobilityWork\Domain\Model\Data\UserDTO;
 use MobilityWork\Domain\Model\Entity\Hotel;
 use MobilityWork\Domain\Model\Entity\Language;
 use MobilityWork\Domain\Model\Entity\Reservation;
-use MobilityWork\Domain\Port\Out\HotelRepositoryPort;
-use MobilityWork\Domain\Port\Out\LanguageRepositoryPort;
-use MobilityWork\Domain\Port\Out\ReservationRepositoryPort;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 
 final class CustomerTicketDataBuilder
 {
     public function __construct(
-        private readonly ReservationRepositoryPort $reservationRepository,
-        private readonly HotelRepositoryPort $hotelRepository,
-        private readonly LanguageRepositoryPort $languageRepository,
+        private readonly ReservationFinder $reservationFinder,
+        private readonly HotelFinder $hotelFinder,
+        private readonly LanguageFinder $languageFinder,
     ) {
     }
 
     public function build(CreateCustomerTicketCommand $command): TicketCreationDataDTO
     {
         /** @var ?Reservation $reservation */
-        $reservation = $this->findReservation($command->request->reservationNumber);
+        $reservation = $this->reservationFinder->getByRef($command->request->reservationNumber);
         /** @var ?Hotel $hotel */
-        $hotel = $this->findHotel($command->request->hotelId);
+        $hotel = $this->hotelFinder->findById($command->request->hotelId);
         /** @var ?Language $language */
-        $language = $this->findLanguage($command->request->languageId);
+        $language = $this->languageFinder->findById($command->request->languageId);
 
         $customFields = $this->buildCustomFields($reservation, $hotel, $language);
 
@@ -52,33 +52,6 @@ final class CustomerTicketDataBuilder
         );
 
         return new TicketCreationDataDTO($user, $ticket);
-    }
-
-    private function findLanguage(?int $languageId): ?Language
-    {
-        if (null === $languageId) {
-            return null;
-        }
-
-        return $this->languageRepository->findOneById($languageId);
-    }
-
-    private function findHotel(?int $hotelId): ?Hotel
-    {
-        if (null === $hotelId) {
-            return null;
-        }
-
-        return $this->hotelRepository->findOneById($hotelId);
-    }
-
-    private function findReservation(?string $reservationReference): ?Reservation
-    {
-        if (empty($reservationReference)) {
-            return null;
-        }
-
-        return $this->reservationRepository->getByRef($reservationReference);
     }
 
     /**
