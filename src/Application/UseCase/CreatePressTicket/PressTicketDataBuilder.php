@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreatePressTicket;
 
+use MobilityWork\Domain\Model\Data\TicketCreationDataDTO;
+use MobilityWork\Domain\Model\Data\TicketDTO;
+use MobilityWork\Domain\Model\Data\UserDTO;
 use MobilityWork\Domain\Model\Entity\Language;
 use MobilityWork\Domain\Port\Out\LanguageRepositoryPort;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
@@ -15,13 +18,10 @@ final class PressTicketDataBuilder
     ) {
     }
 
-    public function build(CreatePressTicketCommand $command): PressTicketDataDTO
+    public function build(CreatePressTicketCommand $command): TicketCreationDataDTO
     {
         /** @var ?Language $language */
-        $language = null;
-        if (null !== $command->request->languageId) {
-            $language = $this->languageRepository->findOneById($command->request->languageId);
-        }
+        $language = $this->languageRepository->findOneById($command->request->languageId);
 
         $customFields = [];
         $customFields[ZendeskCustomFields::TICKET_TYPE] = 'press';
@@ -31,25 +31,21 @@ final class PressTicketDataBuilder
             $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $language->getName();
         }
 
-        $user = [
-            'email' => $command->request->email,
-            'name' => $command->request->firstName.' '.strtoupper($command->request->lastName),
-            'phone' => $command->request->phoneNumber,
-            'role' => 'end-user',
-            'user_fields' => ['press_media' => $command->request->media],
-        ];
+        $user = new UserDTO(
+            email: $command->request->email,
+            name: $command->request->firstName.' '.strtoupper($command->request->lastName),
+            phone: $command->request->phoneNumber,
+            userFields: ['press_media' => $command->request->media],
+        );
 
-        $ticket = [
-            'subject' => 50 < strlen($command->request->message) ? substr($command->request->message, 0, 50).'...' : $command->request->message,
-            'comment' => [
+        $ticket = new TicketDTO(
+            subject: 50 < strlen($command->request->message) ? substr($command->request->message, 0, 50).'...' : $command->request->message,
+            comment: [
                 'body' => $command->request->message,
             ],
-            'priority' => 'normal',
-            'type' => 'question',
-            'status' => 'new',
-            'custom_fields' => $customFields,
-        ];
+            customFields: $customFields
+        );
 
-        return new PressTicketDataDTO($user, $ticket);
+        return new TicketCreationDataDTO($user, $ticket);
     }
 }

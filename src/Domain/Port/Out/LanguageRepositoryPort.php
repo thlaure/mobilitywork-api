@@ -8,5 +8,5 @@ use MobilityWork\Domain\Model\Entity\Language;
 
 interface LanguageRepositoryPort
 {
-    public function findOneById(int $id): ?Language;
+    public function findOneById(?int $id): ?Language;
 }

@@ -8,7 +8,7 @@ final class TicketDTO
 {
     /**
      * @param array<string,mixed> $comment
-     * @param array<string,mixed> $customFields
+     * @param array<string|int,mixed> $customFields
      */
     public function __construct(
         public string $subject,

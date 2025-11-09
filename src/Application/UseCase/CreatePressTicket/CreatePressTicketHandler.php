@@ -22,6 +22,8 @@ class CreatePressTicketHandler
 
         $userId = $this->ticketCreator->createOrUpdateUser($ticketData->user);
 
-        $this->ticketCreator->createTicket($ticketData->ticket + ['requester_id' => $userId]);
+        $updatedTicket = $ticketData->ticket->withCustomField('requester_id', $userId);
+
+        $this->ticketCreator->createTicket($updatedTicket);
     }
 }
