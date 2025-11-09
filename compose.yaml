@@ -1,7 +1,9 @@
 
 services:
   php:
-    image: dunglas/frankenphp
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     depends_on:
       - database
