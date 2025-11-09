@@ -21,7 +21,7 @@ final class PartnersTicketDataBuilder
     public function build(CreatePartnersTicketCommand $command): TicketCreationDataDTO
     {
         /** @var ?Language $language */
-        $language = $this->languageRepository->findOneById($command->request->languageId);
+        $language = $this->findLanguage($command->request->languageId);
 
         $customFields = [];
         $customFields[ZendeskCustomFields::TICKET_TYPE] = 'partner';
@@ -45,5 +45,14 @@ final class PartnersTicketDataBuilder
         );
 
         return new TicketCreationDataDTO($user, $ticket);
+    }
+
+    private function findLanguage(?int $languageId): ?Language
+    {
+        if (null === $languageId) {
+            return null;
+        }
+
+        return $this->languageRepository->findOneById($languageId);
     }
 }

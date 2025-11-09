@@ -38,7 +38,9 @@ final class CustomerTicketDataBuilder
         $user = new UserDTO(
             email: $command->request->email,
             name: $command->request->firstName.' '.strtoupper($command->request->lastName),
-            phone: !empty($command->request->phoneNumber) ? $command->request->phoneNumber : (null !== $reservation ? $reservation->getCustomer()->getSimplePhoneNumber() : '')
+            phone: !empty($command->request->phoneNumber)
+                ? $command->request->phoneNumber
+                : $reservation?->getCustomer()?->getSimplePhoneNumber()
         );
 
         $ticket = new TicketDTO(
@@ -72,7 +74,7 @@ final class CustomerTicketDataBuilder
 
     private function findReservation(?string $reservationReference): ?Reservation
     {
-        if (!empty($reservationReference)) {
+        if (empty($reservationReference)) {
             return null;
         }
 
@@ -80,7 +82,7 @@ final class CustomerTicketDataBuilder
     }
 
     /**
-     * @return array<string,mixed>
+     * @return array<string|int,mixed>
      */
     private function buildCustomFields(
         ?Reservation $reservation,
@@ -98,11 +100,11 @@ final class CustomerTicketDataBuilder
         }
 
         if (null !== $reservation) {
-            $roomName = $reservation->getRoom()->getName().' ('.$reservation->getRoom()->getType().')';
+            $roomName = null === $reservation->getRoom() ? null : $reservation->getRoom()->getName().' ('.$reservation->getRoom()->getType().')';
             $customFields[ZendeskCustomFields::ROOM_NAME] = $roomName;
-            $customFields[ZendeskCustomFields::BOOKED_DATE] = $reservation->getBookedDate()->format('Y-m-d');
-            $customFields[ZendeskCustomFields::ROOM_PRICE] = $reservation->getRoomPrice().' '.$reservation->getHotel()->getCurrency()->getCode();
-            $customFields[ZendeskCustomFields::BOOKED_TIME] = $reservation->getBookedStartTime()->format('H:i').' - '.$reservation->getBookedEndTime()->format('H:i');
+            $customFields[ZendeskCustomFields::BOOKED_DATE] = $reservation->getBookedDate()?->format('Y-m-d');
+            $customFields[ZendeskCustomFields::ROOM_PRICE] = $reservation->getRoomPrice().' '.$reservation->getHotel()?->getCurrency()?->getCode();
+            $customFields[ZendeskCustomFields::BOOKED_TIME] = $reservation->getBookedStartTime()?->format('H:i').' - '.$reservation->getBookedEndTime()?->format('H:i');
         }
 
         if (null !== $language) {

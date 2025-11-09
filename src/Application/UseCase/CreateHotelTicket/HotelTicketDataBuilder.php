@@ -21,7 +21,7 @@ final class HotelTicketDataBuilder
     public function build(CreateHotelTicketCommand $command): TicketCreationDataDTO
     {
         /** @var ?Language $language */
-        $language = $this->languageRepository->findOneById($command->request->languageId);
+        $language = $this->findLanguage($command->request->languageId);
 
         $customFields = [];
         $customFields[ZendeskCustomFields::TICKET_TYPE] = 'hotel';
@@ -50,5 +50,14 @@ final class HotelTicketDataBuilder
         );
 
         return new TicketCreationDataDTO($user, $ticket);
+    }
+
+    private function findLanguage(?int $languageId): ?Language
+    {
+        if (null === $languageId) {
+            return null;
+        }
+
+        return $this->languageRepository->findOneById($languageId);
     }
 }
