@@ -19,7 +19,7 @@ class LanguageRepository extends ServiceEntityRepository implements LanguageRepo
         parent::__construct($registry, Language::class);
     }
 
-    public function findOneById(?int $id): ?Language
+    public function findOneById(int $id): ?Language
     {
         return $this->find($id);
     }
