@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreateCustomerTicket;
 
+use MobilityWork\Domain\Model\Data\TicketCreationDataDTO;
 use MobilityWork\Domain\Model\Data\TicketDTO;
 use MobilityWork\Domain\Model\Data\UserDTO;
 use MobilityWork\Domain\Model\Entity\Hotel;
@@ -23,7 +24,7 @@ final class CustomerTicketDataBuilder
     ) {
     }
 
-    public function build(CreateCustomerTicketCommand $command): CustomerTicketDataDTO
+    public function build(CreateCustomerTicketCommand $command): TicketCreationDataDTO
     {
         /** @var ?Reservation $reservation */
         $reservation = $this->findReservation($command->request->reservationNumber);
@@ -48,7 +49,7 @@ final class CustomerTicketDataBuilder
             customFields: $customFields
         );
 
-        return new CustomerTicketDataDTO($user, $ticket);
+        return new TicketCreationDataDTO($user, $ticket);
     }
 
     private function findLanguage(?int $languageId): ?Language

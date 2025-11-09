@@ -7,7 +7,7 @@ namespace MobilityWork\Domain\Model\Data;
 final class TicketDTO
 {
     /**
-     * @param array<string,mixed> $comment
+     * @param array<string,mixed>     $comment
      * @param array<string|int,mixed> $customFields
      */
     public function __construct(
