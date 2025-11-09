@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreateCustomerTicket;
 
+use MobilityWork\Domain\Model\Data\TicketDTO;
+use MobilityWork\Domain\Model\Data\UserDTO;
+
 final class CustomerTicketDataDTO
 {
-    /**
-     * @param array<string, mixed> $user
-     * @param array<string, mixed> $ticket
-     */
     public function __construct(
-        public readonly array $user,
-        public readonly array $ticket,
+        public readonly UserDTO $user,
+        public readonly TicketDTO $ticket,
     ) {
     }
 }

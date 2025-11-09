@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MobilityWork\Application\UseCase\CreateCustomerTicket;
 
+use MobilityWork\Domain\Model\Data\TicketDTO;
+use MobilityWork\Domain\Model\Data\UserDTO;
 use MobilityWork\Domain\Model\Entity\Hotel;
 use MobilityWork\Domain\Model\Entity\Language;
 use MobilityWork\Domain\Model\Entity\Reservation;
@@ -24,37 +26,72 @@ final class CustomerTicketDataBuilder
     public function build(CreateCustomerTicketCommand $command): CustomerTicketDataDTO
     {
         /** @var ?Reservation $reservation */
-        $reservation = null;
+        $reservation = $this->findReservation($command->request->reservationNumber);
         /** @var ?Hotel $hotel */
-        $hotel = null;
+        $hotel = $this->findHotel($command->request->hotelId);
         /** @var ?Language $language */
-        $language = null;
+        $language = $this->findLanguage($command->request->languageId);
 
-        if (null !== $command->request->languageId) {
-            $language = $this->languageRepository->findOneById($command->request->languageId);
+        $customFields = $this->buildCustomFields($reservation, $hotel, $language);
+
+        $user = new UserDTO(
+            email: $command->request->email,
+            name: $command->request->firstName.' '.strtoupper($command->request->lastName),
+            phone: !empty($command->request->phoneNumber) ? $command->request->phoneNumber : (null !== $reservation ? $reservation->getCustomer()->getSimplePhoneNumber() : '')
+        );
+
+        $ticket = new TicketDTO(
+            subject: 50 < strlen($command->request->message) ? substr($command->request->message, 0, 50).'...' : $command->request->message,
+            comment: [
+                'body' => $command->request->message,
+            ],
+            customFields: $customFields
+        );
+
+        return new CustomerTicketDataDTO($user, $ticket);
+    }
+
+    private function findLanguage(?int $languageId): ?Language
+    {
+        if (null === $languageId) {
+            return null;
         }
 
-        if (null !== $command->request->hotelId) {
-            $hotel = $this->hotelRepository->findOneById($command->request->hotelId);
+        return $this->languageRepository->findOneById($languageId);
+    }
+
+    private function findHotel(?int $hotelId): ?Hotel
+    {
+        if (null === $hotelId) {
+            return null;
         }
 
-        if (!empty($command->request->reservationNumber)) {
-            $reservation = $this->reservationRepository->getByRef($command->request->reservationNumber);
+        return $this->hotelRepository->findOneById($hotelId);
+    }
 
-            if (null !== $reservation) {
-                if (null === $hotel) {
-                    $hotel = $reservation->getHotel();
-                }
-            }
+    private function findReservation(?string $reservationReference): ?Reservation
+    {
+        if (!empty($reservationReference)) {
+            return null;
         }
 
+        return $this->reservationRepository->getByRef($reservationReference);
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function buildCustomFields(
+        ?Reservation $reservation,
+        ?Hotel $hotel,
+        ?Language $language,
+    ): array {
         $customFields = [];
         $customFields[ZendeskCustomFields::TICKET_TYPE] = 'customer';
-        $customFields[ZendeskCustomFields::RESERVATION_NUMBER] = $command->request->reservationNumber;
+        $customFields[ZendeskCustomFields::RESERVATION_NUMBER] = $reservation?->getReference();
 
         if (null !== $hotel) {
-            $hotelContact = $hotel->getMainContact();
-            $customFields[ZendeskCustomFields::HOTEL_CONTACT_EMAIL] = $hotelContact?->getEmail();
+            $customFields[ZendeskCustomFields::HOTEL_CONTACT_EMAIL] = $hotel->getMainContact()?->getEmail();
             $customFields[ZendeskCustomFields::HOTEL_NAME] = $hotel->getName();
             $customFields[ZendeskCustomFields::HOTEL_ADDRESS] = $hotel->getAddress();
         }
@@ -71,24 +108,6 @@ final class CustomerTicketDataBuilder
             $customFields[ZendeskCustomFields::LANGUAGE_NAME] = $language->getName();
         }
 
-        $user = [
-            'email' => $command->request->email,
-            'name' => $command->request->firstName.' '.strtoupper($command->request->lastName),
-            'phone' => !empty($command->request->phoneNumber) ? $command->request->phoneNumber : (null !== $reservation ? $reservation->getCustomer()->getSimplePhoneNumber() : ''),
-            'role' => 'end-user',
-        ];
-
-        $ticket = [
-            'subject' => 50 < strlen($command->request->message) ? substr($command->request->message, 0, 50).'...' : $command->request->message,
-            'comment' => [
-                'body' => $command->request->message,
-            ],
-            'priority' => 'normal',
-            'type' => 'question',
-            'status' => 'new',
-            'custom_fields' => $customFields,
-        ];
-
-        return new CustomerTicketDataDTO($user, $ticket);
+        return $customFields;
     }
 }
