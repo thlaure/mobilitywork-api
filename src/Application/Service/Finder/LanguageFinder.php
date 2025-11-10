@@ -7,7 +7,7 @@ namespace MobilityWork\Application\Service\Finder;
 use MobilityWork\Domain\Model\Entity\Language;
 use MobilityWork\Domain\Port\Out\LanguageRepositoryPort;
 
-final class LanguageFinder
+class LanguageFinder
 {
     public function __construct(
         private readonly LanguageRepositoryPort $languageRepository,

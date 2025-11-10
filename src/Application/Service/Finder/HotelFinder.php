@@ -7,7 +7,7 @@ namespace MobilityWork\Application\Service\Finder;
 use MobilityWork\Domain\Model\Entity\Hotel;
 use MobilityWork\Domain\Port\Out\HotelRepositoryPort;
 
-final class HotelFinder
+class HotelFinder
 {
     public function __construct(
         private readonly HotelRepositoryPort $hotelRepository,
