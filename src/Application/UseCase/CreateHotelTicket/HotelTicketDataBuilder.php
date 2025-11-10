@@ -11,7 +11,7 @@ use MobilityWork\Domain\Model\Data\UserDTO;
 use MobilityWork\Domain\Model\Entity\Language;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 
-final class HotelTicketDataBuilder
+class HotelTicketDataBuilder
 {
     public function __construct(
         private readonly LanguageFinder $languageFinder,

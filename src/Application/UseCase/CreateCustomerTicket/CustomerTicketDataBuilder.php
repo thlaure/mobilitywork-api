@@ -15,7 +15,7 @@ use MobilityWork\Domain\Model\Entity\Language;
 use MobilityWork\Domain\Model\Entity\Reservation;
 use MobilityWork\Infrastructure\Zendesk\Constants\ZendeskCustomFields;
 
-final class CustomerTicketDataBuilder
+class CustomerTicketDataBuilder
 {
     public function __construct(
         private readonly ReservationFinder $reservationFinder,
