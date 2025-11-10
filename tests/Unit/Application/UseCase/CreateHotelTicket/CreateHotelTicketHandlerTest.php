@@ -64,6 +64,6 @@ final class CreateHotelTicketHandlerTest extends TestCase
             ->with($ticketDTO)
             ->willReturn(1);
 
-        $this->handler->__invoke($command);
+        ($this->handler)($command);
     }
 }
