@@ -33,7 +33,8 @@ class ZendeskTicketCreatorAdapter implements TicketCreatorPort
         }
 
         if (empty($response->user->id)) {
-            throw new \RuntimeException('Failed to create or update Zendesk user.');
+            $this->logger->error('Created or updated Zendesk user has no id.', ['userData' => $zendeskUserData]);
+            throw new \RuntimeException('Created or updated Zendesk user has no id.');
         }
 
         return $response->user->id;
@@ -52,7 +53,8 @@ class ZendeskTicketCreatorAdapter implements TicketCreatorPort
         }
 
         if (empty($response->ticket->id)) {
-            throw new \RuntimeException('Failed to create Zendesk ticket.');
+            $this->logger->error('Created Zendesk ticket has no id.', ['ticketData' => $zendeskTicketData]);
+            throw new \RuntimeException('Created Zendesk ticket has no id.');
         }
 
         return $response->ticket->id;
