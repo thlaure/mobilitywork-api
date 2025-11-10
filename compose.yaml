@@ -3,7 +3,7 @@ services:
   php:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: .docker/php/Dockerfile
     restart: always
     depends_on:
       - database
