@@ -6,6 +6,7 @@ namespace MobilityWork\Infrastructure\Controller;
 
 use MobilityWork\Application\UseCase\CreatePressTicket\CreatePressTicketCommand;
 use MobilityWork\Domain\Model\Ticket\CreatePressTicketRequest;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,16 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api/tickets/press', name: 'app_tickets_press', methods: [Request::METHOD_POST])]
+#[OA\Tag(name: 'Tickets')]
+#[OA\Response(
+    response: Response::HTTP_ACCEPTED,
+    description: 'Create a customer ticket',
+    content: new OA\JsonContent(
+        properties: [
+            new OA\Property(property: 'message', type: 'string', example: 'Press ticket creation request received.'),
+        ]
+    )
+)]
 final class TicketsPressController extends AbstractController
 {
     public function __construct(
