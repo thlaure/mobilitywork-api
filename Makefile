@@ -31,5 +31,8 @@ unit: ## Run unit tests
 phpstan: ## Run PHPStan
 	@$(EXEC_PHP) ./vendor/bin/phpstan analyse
 
-csfixer:
+csfixer: ## Run CSFixer
 	@$(EXEC_PHP) ./vendor/bin/php-cs-fixer  fix --allow-risky=yes
+
+security: ## Run Security Checker enlightn on composer.lock
+	@$(EXEC_PHP) ./vendor/bin/security-checker security:check composer.lock
