@@ -37,10 +37,6 @@ jobs:
             *.cache-from=type=gha,scope=${{github.ref}}
             *.cache-from=type=gha,scope=refs/heads/main
             *.cache-to=type=gha,scope=${{github.ref}},mode=max
-      # - 
-      #   name: Debug Healthcheck
-      #   run: docker compose exec php curl -v http://localhost:2019/metrics
-
       -
         name: Start services
         run: docker compose up --wait --no-build || true
@@ -52,7 +48,12 @@ jobs:
         run: docker compose ps || true
       -
         name: Check HTTPS reachability
-        run: curl -vk --fail-with-body https://localhost
+        run: |
+          for i in $(seq 1 10); do
+            curl -vk --fail-with-body https://localhost && exit 0
+            sleep 3
+          done
+          exit 1
       -
         name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
