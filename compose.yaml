@@ -1,4 +1,3 @@
-
 services:
   php:
     image: ${IMAGE_PREFIX:-}mobilitywork-api-php
@@ -13,6 +12,8 @@ services:
       - "80:80" # HTTP
       - "443:443" # HTTPS
       - "443:443/udp" # HTTP/3
+    extra_hosts:
+      - host.docker.internal:host-gateway
     volumes:
       - ./:/app
       - caddy_data:/data
