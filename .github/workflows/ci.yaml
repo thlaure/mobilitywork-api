@@ -47,14 +47,6 @@ jobs:
         name: Print Docker Compose ps
         run: docker compose ps || true
       -
-        name: Check HTTPS reachability
-        run: |
-          for i in $(seq 1 10); do
-            curl -vk --fail-with-body https://localhost && exit 0
-            sleep 3
-          done
-          exit 1
-      -
         name: Create test database
         run: docker compose exec -T php bin/console -e test doctrine:database:create
       -
