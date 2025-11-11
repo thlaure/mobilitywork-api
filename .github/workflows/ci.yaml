@@ -51,9 +51,6 @@ jobs:
         name: Print Docker Compose ps
         run: docker compose ps || true
       -
-        name: Check HTTP reachability
-        run: curl -v --fail-with-body http://localhost
-      -
         name: Check HTTPS reachability
         run: curl -vk --fail-with-body https://localhost
       -
@@ -62,9 +59,9 @@ jobs:
       -
         name: Run migrations
         run: docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
-      # -
-      #   name: Security check
-      #   run: docker compose exec -T php symfony check:security
+      -
+        name: Security check
+        run: docker compose exec -T php ./vendor/bin/security-checker security:check composer.lock
       -
         name: Run PHPUnit
         run: docker compose exec -T php bin/phpunit
@@ -101,3 +98,5 @@ jobs:
       -
         name: Lint Dockerfile
         uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: .docker/php/Dockerfile
