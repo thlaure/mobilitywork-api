@@ -1,9 +1,11 @@
 
 services:
   php:
+    image: ${IMAGE_PREFIX:-}mobilitywork-api-php
     build:
       context: .
       dockerfile: .docker/php/Dockerfile
+    container_name: mobilitywork-api-php
     restart: always
     depends_on:
       - database
