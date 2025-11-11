@@ -21,6 +21,10 @@ clean: ## Remove all containers, images, volumes and other build artifacts
 bash: ## Run bash
 	@$(EXEC_PHP) bash
 
+exec: ## Run any bash command
+	@$(eval c ?=)
+	@$(EXEC_PHP) $(c)
+
 sf: ## Run any Symfony command
 	@$(eval c ?=)
 	@$(EXEC_PHP) ./bin/console $(c)
