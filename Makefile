@@ -18,6 +18,11 @@ clean: ## Remove all containers, images, volumes and other build artifacts
 	@$(DOCKER_COMPOSE) down -v --rmi all --remove-orphans
 	@$(DOCKER) system prune -f
 
+rebuild:
+	@$(DOCKER_COMPOSE) down --remove-orphans
+	@$(DOCKER_COMPOSE) build --no-cache
+	@$(DOCKER_COMPOSE) up -d
+
 bash: ## Run bash
 	@$(EXEC_PHP) bash
 
